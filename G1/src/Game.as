@@ -24,7 +24,6 @@ package
 	 */
 	public class Game extends Sprite
 	{
-		//public static var score:int = 0; //Score number
 		public static var keyArray:Array = [68, 65, 87, 83, 39, 37, 38, 40];
 		public static var typeArr:Array = ["●", "■", "✖", "▲", "→", "←", "↓", "↑"]; //↑　→　↓　←　×　Ⅹ　〇　✖　□ ■　▲　●　○　∆　⇦　♦ ▲ ► ▼ ◄
 		public static var colorArr:Array = [0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF, 0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF];
@@ -35,9 +34,6 @@ package
 		
 		private const FILE_HEADER_SIZE:int = 16;
 		
-		//private var score_text:TextField = new TextField(); //Rendered score
-		//private var score_text_color:uint = 0x000000; //Rendered score color
-		
 		private var note_array:Array;
 		private var noteLoader:URLLoader;
 		
@@ -46,7 +42,7 @@ package
 		private var block_active:Array = new Array();
 		private var block_last:Array = new Array();
 		
-		private var block_pre_display_time:Number = 1000;
+		private var block_pre_display_time:Number = 1500;
 		private var block_destroy_time:Number = 320;
 		
 		public var score:Score = new Score();
@@ -144,11 +140,12 @@ package
 		
 		private function keyUp(e:KeyboardEvent):void
 		{
+			return;
 		}
 		
 		public function enterFrame(e:Event):void
 		{
-			//score_text.text = String(score);
+			score.Update();
 			
 			if (track_channel)
 			{
@@ -169,22 +166,17 @@ package
 			
 			if (block_active.length)
 			{
-				for (var i:int = block_active.length - 1; i >= 0; i--)
+				if ((track_current_time > block_active[0].time) && (block_active[0].state))
+					{
+						block_active[0].state = 0;
+						block_active[0].event_duration = block_destroy_time;
+						score.Change(false, 1);
+						block_last.push(block_active.shift());
+					}
+				
+				for each (var bl:Block in block_active) 
 				{
-					if (track_current_time > block_active[i].time)
-					{
-						block_active[i].state = 0;
-						block_active[i].event_duration = block_destroy_time;
-					}
-					
-					if (track_current_time > block_active[i].time + block_destroy_time)
-					{
-						removeChild(block_active[i]);
-						block_active.shift();
-						break;
-					}
-					
-					block_active[i].DrawUpdate((track_current_time - block_active[i].time) / block_active[i].event_duration);
+					bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration);
 				}
 			}
 			

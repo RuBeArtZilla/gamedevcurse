@@ -43,7 +43,7 @@ package
 			var SymTextFormat:TextFormat = new TextFormat();
 			var glowFilter:BitmapFilter = getBitmapFilter();
 			
-			filters = [ glowFilter, new GlowFilter(Game.colorArr[type],  0.4, 8, 8, 4, BitmapFilterQuality.HIGH, true, false)]
+			filters = [ glowFilter, new GlowFilter(Game.colorArr[type],  0.4, 8, 8, 4, BitmapFilterQuality.LOW, true, false)]
 			
 			Sym.text = Game.typeArr[type];
 			Sym.width = size;
@@ -56,7 +56,7 @@ package
 			Sym.antiAliasType = flash.text.AntiAliasType.ADVANCED;
 			Sym.setTextFormat(SymTextFormat);
 			Sym.defaultTextFormat = Sym.getTextFormat();
-			Sym.filters = [ new GlowFilter(0xffffff,  0.4, 8, 8, 4, BitmapFilterQuality.HIGH, false, false) ]
+			Sym.filters = [ new GlowFilter(0xffffff,  0.4, 8, 8, 4, BitmapFilterQuality.LOW, false, false) ]
 			addChild(Sym);
 		}
 		

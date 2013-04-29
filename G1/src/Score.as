@@ -23,20 +23,19 @@ package
 		private const SCREEN_OFFSET:Number = 0.95;
 		private const DEFAULT_SCREEN_POSITION = SCREEN_OFFSET * Main.screen_height;
 		
-		private const DEFAULT_FONT_SIZE:Number = 30;
+		private const DEFAULT_FONT_SIZE:Number = 40;
 		
 		public const SCORE_MULTIPLIER:Number = 50;
 		public const SCALE:Number = 5;
 		
-		private var score:int = 0;			//Current player scores
-		private var hp:int = DEFAULT_HP;	//Current hp, if less 0 game_over
-		private var series:int = 0;			//Correct keys in a row
+		private var score:int = 0; //Current player scores
+		private var hp:int = DEFAULT_HP; //Current hp, if less 0 game_over
+		private var series:int = 0; //Correct keys in a row
 		
 		private var score_text:TextField = new TextField();
 		private var score_text_color:uint = 0x00FF00;
 		
-		private var notice_array:Array = new Array();	//For "fly" text with scores changes
-		
+		private var notice_array:Array = new Array(); //For "fly" text with scores changes
 		
 		public function Score()
 		{
@@ -68,27 +67,68 @@ package
 		
 		public function Update():void
 		{
-		
+			if (notice_array.length)
+			{
+				for each (var flytext:TextField in notice_array)
+				{
+					flytext.y = flytext.y - 1;
+					flytext.alpha = flytext.alpha - 0.01;
+				}
+				
+				if (notice_array[0].alpha <= 0)
+				{
+					removeChild(notice_array[0]);
+					notice_array.shift();
+				}
+			}
 		}
 		
 		public function Change(correct:Boolean, percent:Number /*must be [0...1]*/):void
 		{
-			var change:Number = SCALE - Math.floor(SCALE * Math.abs(percent));
+			var change:Number = - Math.floor(SCALE * Math.abs(percent));
 			
-			if (!correct)
-				change = -1 - change;
-			score += change * SCORE_MULTIPLIER;
+			if (correct)
+			{
+				series++;
+				change = SCALE + change + 1;
+				score += change * SCORE_MULTIPLIER * series;
+			}
+			else
+			{
+				series = 0;
+				score += change * SCORE_MULTIPLIER;
+			}
 			
-			hp += score;
+			hp += change;
 			if (hp > MAX_XP)
 				hp = MAX_XP;
-			
+				
 			var pos = notice_array.length;
 			
 			notice_array.push(new TextField());
 			notice_array[pos].x = (1 - SCREEN_OFFSET) * Main.screen_width;
+			notice_array[pos].y = DEFAULT_SCREEN_POSITION - DEFAULT_FONT_SIZE - DEFAULT_FONT_SIZE;
 			
-			addChild(notice_array[pos])
+			var scoreTextFormat:TextFormat = new TextFormat();
+			scoreTextFormat.align = TextFormatAlign.LEFT;
+			scoreTextFormat.size = DEFAULT_FONT_SIZE;
+			notice_array[pos].setTextFormat(scoreTextFormat);
+			notice_array[pos].defaultTextFormat = notice_array[pos].getTextFormat();
+						
+			if (correct)
+			{
+				notice_array[pos].textColor = 0x00FF00;
+				notice_array[pos].text = percent.toString();//"+" + String(change * SCORE_MULTIPLIER);
+			}
+			else 
+			{
+				notice_array[pos].textColor = 0xFF0000;
+				notice_array[pos].text = percent.toString();// String(change * SCORE_MULTIPLIER);
+			}
+			
+			//notice_array[pos].filters = [new GlowFilter(0xFFFFFF, 1, 4, 4, 4, BitmapFilterQuality.LOW, false, false)];
+			
+			addChild(notice_array[pos]);
 			
 			score_text.text = String(score);
 		}

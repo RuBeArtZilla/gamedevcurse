@@ -5,6 +5,7 @@ package
     import flash.filters.BitmapFilterQuality;
     import flash.filters.GlowFilter;
 	import flash.filters.BlurFilter;
+	
 	/**
 	 * ...
 	 * @author ArtZilla

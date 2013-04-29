@@ -114,7 +114,7 @@ package
 				circle_drag.x = CalcQuadraticBezier(1 + t, from_x, to_x, to_x);
 				circle_drag.y = CalcQuadraticBezier(1 + t, from_y, from_y, to_y);
 				
-				filters = [ new GlowFilter(Game.colorArr[type],  (- t), 16 * (1 + t), 16 * (1 + t), 4, BitmapFilterQuality.HIGH, false, false) ];
+				filters = [ new GlowFilter(Game.colorArr[type],  (- t), 16 * (1 + t), 16 * (1 + t), 4, BitmapFilterQuality.LOW, false, false) ];
 				
 				var cqvx:Number = CalcQuadraticBezier(1 + t, from_x + half, to_x + half, to_x + half);
 				var cqvy:Number = CalcQuadraticBezier(1 + t, from_y + half, from_y + half, to_y + half);
@@ -140,7 +140,7 @@ package
 				circle_drag.x = to_x;
 				circle_drag.y = to_y;
 				circle_drag.visible = false;
-				filters = [ new GlowFilter(Game.colorArr[type],  0.5, 16 * t, 16 * t, 4, BitmapFilterQuality.HIGH, false, false), new BlurFilter(16 * t, 16 * t, BitmapFilterQuality.HIGH) ];
+				filters = [ new GlowFilter(Game.colorArr[type],  0.5, 16 * t, 16 * t, 4, BitmapFilterQuality.LOW, false, false), new BlurFilter(16 * t, 16 * t, BitmapFilterQuality.LOW) ];
 				this.graphics.clear();
 			}		
 		}
