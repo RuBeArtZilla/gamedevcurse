@@ -85,12 +85,12 @@ package
 		
 		public function Change(correct:Boolean, percent:Number /*must be [0...1]*/):void
 		{
-			var change:Number = - Math.floor(SCALE * Math.abs(percent));
+			var change:Number = - Math.floor(SCALE * Math.abs(percent * percent));
 			
 			if (correct)
 			{
 				series++;
-				change = SCALE + change + 1;
+				change = SCALE + change;
 				score += change * SCORE_MULTIPLIER * series;
 			}
 			else
@@ -118,12 +118,12 @@ package
 			if (correct)
 			{
 				notice_array[pos].textColor = 0x00FF00;
-				notice_array[pos].text = percent.toString();//"+" + String(change * SCORE_MULTIPLIER);
+				notice_array[pos].text = "+" + String(change * SCORE_MULTIPLIER);
 			}
 			else 
 			{
 				notice_array[pos].textColor = 0xFF0000;
-				notice_array[pos].text = percent.toString();// String(change * SCORE_MULTIPLIER);
+				notice_array[pos].text = String(change * SCORE_MULTIPLIER);
 			}
 			
 			//notice_array[pos].filters = [new GlowFilter(0xFFFFFF, 1, 4, 4, 4, BitmapFilterQuality.LOW, false, false)];

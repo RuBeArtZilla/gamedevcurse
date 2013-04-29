@@ -21,7 +21,7 @@ package
 		private var left_offset:Number = 200;
 		private var track_duration_in_pixel:Number = 0;
 		
-		private var glow:GlowFilter = new GlowFilter(0xCCCCCC,  0.8, 16, 16, 4, BitmapFilterQuality.HIGH, false, false);
+		private var glow:GlowFilter = new GlowFilter(0xCCCCCC,  0.8, 16, 16, 4, BitmapFilterQuality.LOW, false, false);
 		
 		private var cooldown:uint = GLOW_DURATION;
 		

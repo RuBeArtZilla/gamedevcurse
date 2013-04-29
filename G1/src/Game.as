@@ -133,7 +133,7 @@ package
 					block_last.push(block_active.shift());
 					var tmp:Block = block_last[block_last.length - 1];
 					
-					score.Change(tmp.keyID == e.keyCode, (track_channel.position - tmp.time) / tmp.event_duration);
+					score.Change(tmp.keyID == e.keyCode, (tmp.time - track_channel.position) / tmp.event_duration);
 				}
 			}
 		}
@@ -166,7 +166,7 @@ package
 			
 			if (block_active.length)
 			{
-				if ((track_current_time > block_active[0].time) && (block_active[0].state))
+				if (track_current_time > block_active[0].time)
 					{
 						block_active[0].state = 0;
 						block_active[0].event_duration = block_destroy_time;
@@ -186,7 +186,7 @@ package
 				{
 					if (track_current_time > block_last[i].time)
 					{
-						block_last[i].state = 0;
+						//block_last[i].state = 0;
 						block_last[i].event_duration = block_destroy_time;
 					}
 					
