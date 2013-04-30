@@ -56,7 +56,7 @@ package
 			Sym.antiAliasType = flash.text.AntiAliasType.ADVANCED;
 			Sym.setTextFormat(SymTextFormat);
 			Sym.defaultTextFormat = Sym.getTextFormat();
-			Sym.filters = [ new GlowFilter(0xffffff,  0.4, 8, 8, 4, BitmapFilterQuality.LOW, false, false) ]
+			Sym.filters = [ new GlowFilter(0xffffff,  0.8, 8, 8, 4, BitmapFilterQuality.HIGH, false, false) ]
 			addChild(Sym);
 		}
 		
@@ -68,7 +68,7 @@ package
             var strength:Number = 1;
             var inner:Boolean = false;
             var knockout:Boolean = false;
-            var quality:Number = BitmapFilterQuality.HIGH;
+            var quality:Number = BitmapFilterQuality.LOW;
             return new GlowFilter(color, alpha, blurX, blurY, strength, quality, inner, knockout);
         }
 		

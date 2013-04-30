@@ -31,7 +31,8 @@ package
 		public static var colorArrBkg:Array = [0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF, 0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF];
 		public static var colorArrSdw:Array = [0x330000, 0x330033, 0x003300, 0x000033, 0x330000, 0x330033, 0x003300, 0x000033];
 		
-		public var notePath:String = "http://files.artzilla.name/game/test/test.anf";
+		//public var notePath:String = "http://files.artzilla.name/game/test/test.anf";
+		public var notePath:String = "http://files.artzilla.name/game/don't_say_lazy/Don't say lazy.anf";
 		
 		private const FILE_HEADER_SIZE:int = 16;
 		
@@ -132,10 +133,10 @@ package
 				if (block_active.length)
 				{
 					var tmp:Block = block_active[0]; //
-					block_active[0].visible = false; //TODO: START DIE ANIMATION
+					//block_active[0].visible = false; //TODO: START DIE ANIMATION
 					block_active[0].state = 0; //
 					block_last.push(block_active.shift()); //
-					score.Change( (e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration); //change scores
+					score.Change((e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration); //change scores
 					return;
 				}
 			}
@@ -175,7 +176,7 @@ package
 			{
 				for (var i:int = block_active.length - 1; i >= 0; i--)
 				{
-					if ( (track_current_time > block_active[i].time) && (block_active[i].active) )
+					if ((track_current_time > block_active[i].time) && (block_active[i].active))
 					{
 						block_active[i].active = false; //deactivate block
 						block_active[i].event_duration = block_destroy_time; //change event duration
@@ -205,9 +206,9 @@ package
 					block_last.shift();
 				}
 				
-				for (var i:int = block_last.length - 1; i >= 0; i--)
+				for (var j:int = block_last.length - 1; j >= 0; j--)
 				{
-					block_last[i].DrawUpdate( (track_current_time - block_last[i].time) / block_last[i].event_duration );
+					block_last[j].DrawUpdate((track_current_time - block_last[j].time) / block_last[j].event_duration);
 				}
 			}
 		}

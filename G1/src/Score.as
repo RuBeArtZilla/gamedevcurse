@@ -21,7 +21,7 @@ package
 		private const DEFAULT_HP:int = 50;
 		
 		private const SCREEN_OFFSET:Number = 0.95;
-		private const DEFAULT_SCREEN_POSITION = SCREEN_OFFSET * Main.screen_height;
+		private const DEFAULT_SCREEN_POSITION:Number = SCREEN_OFFSET * Main.screen_height;
 		
 		private const DEFAULT_FONT_SIZE:Number = 40;
 		
@@ -62,7 +62,7 @@ package
 			
 			addChild(score_text);
 			
-			filters = [new GlowFilter(0xFFFFFF, 0.8, 12, 12, 2, BitmapFilterQuality.LOW, false, false), new GlowFilter(0xFFFFFF, 1, 2, 2, 2, BitmapFilterQuality.LOW, true, false)];
+			filters = [new GlowFilter(0xFFFFFF, 1, 12, 12, 2, BitmapFilterQuality.LOW, false, false), new GlowFilter(0xFFFFFF, 1, 2, 2, 2, BitmapFilterQuality.LOW, true, false)];
 		}
 		
 		public function Update():void
@@ -85,9 +85,11 @@ package
 		
 		public function Change(correct:Boolean, percent:Number /*must be [0...1]*/):void
 		{
-			if ((percent > 1) || (percent < 0)) return;
-			
-			var change:Number = - Math.floor(SCALE * Math.abs(percent * percent));
+			var change:Number = -Math.floor(SCALE * Math.abs(percent));
+			if (change < SCALE)
+				change = -SCALE;
+			if (change > 0)
+				change = 0;
 			
 			if (correct)
 			{
@@ -99,19 +101,21 @@ package
 					change += series;
 				}
 				
-				score += change * SCORE_MULTIPLIER;
+				//score += change * SCORE_MULTIPLIER;
 			}
 			else
 			{
 				series = 0;
-				score += change * SCORE_MULTIPLIER;
+				//score += change * SCORE_MULTIPLIER;
 			}
+			
+			score += change * SCORE_MULTIPLIER;
 			
 			hp += change;
 			if (hp > MAX_XP)
 				hp = MAX_XP;
-				
-			var pos:Number = notice_array.length;
+			
+			var pos:uint = notice_array.length;
 			
 			notice_array.push(new TextField());
 			notice_array[pos].x = (1 - SCREEN_OFFSET) * Main.screen_width;
@@ -122,19 +126,19 @@ package
 			scoreTextFormat.size = DEFAULT_FONT_SIZE;
 			notice_array[pos].setTextFormat(scoreTextFormat);
 			notice_array[pos].defaultTextFormat = notice_array[pos].getTextFormat();
-						
+			
 			if (correct)
 			{
 				notice_array[pos].textColor = 0x00FF00;
-				notice_array[pos].text = "+".concat( String(change * SCORE_MULTIPLIER));
+				notice_array[pos].text = "+".concat(String(change * SCORE_MULTIPLIER));
 			}
-			else 
+			else
 			{
 				notice_array[pos].textColor = 0xFF0000;
 				notice_array[pos].text = String(change * SCORE_MULTIPLIER);
 			}
 			
-			//notice_array[pos].filters = [new GlowFilter(0xFFFFFF, 1, 4, 4, 4, BitmapFilterQuality.LOW, false, false)];
+			notice_array[pos].filters = [new GlowFilter(0xFFFFFF, 1, 8, 8, 4, BitmapFilterQuality.LOW, false, false)];
 			
 			addChild(notice_array[pos]);
 			
