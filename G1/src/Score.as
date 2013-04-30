@@ -62,7 +62,7 @@ package
 			
 			addChild(score_text);
 			
-			filters = [new GlowFilter(0xFFFFFF, 0.8, 12, 12, 2, BitmapFilterQuality.HIGH, false, false), new GlowFilter(0xFFFFFF, 1, 2, 2, 2, BitmapFilterQuality.HIGH, true, false)];
+			filters = [new GlowFilter(0xFFFFFF, 0.8, 12, 12, 2, BitmapFilterQuality.LOW, false, false), new GlowFilter(0xFFFFFF, 1, 2, 2, 2, BitmapFilterQuality.LOW, true, false)];
 		}
 		
 		public function Update():void
@@ -85,13 +85,21 @@ package
 		
 		public function Change(correct:Boolean, percent:Number /*must be [0...1]*/):void
 		{
+			if ((percent > 1) || (percent < 0)) return;
+			
 			var change:Number = - Math.floor(SCALE * Math.abs(percent * percent));
 			
 			if (correct)
 			{
-				series++;
-				change = SCALE + change;
-				score += change * SCORE_MULTIPLIER * series;
+				change += SCALE * 2;
+				
+				if (change > 2)
+				{
+					series++;
+					change += series;
+				}
+				
+				score += change * SCORE_MULTIPLIER;
 			}
 			else
 			{
@@ -103,7 +111,7 @@ package
 			if (hp > MAX_XP)
 				hp = MAX_XP;
 				
-			var pos = notice_array.length;
+			var pos:Number = notice_array.length;
 			
 			notice_array.push(new TextField());
 			notice_array[pos].x = (1 - SCREEN_OFFSET) * Main.screen_width;
@@ -118,7 +126,7 @@ package
 			if (correct)
 			{
 				notice_array[pos].textColor = 0x00FF00;
-				notice_array[pos].text = "+" + String(change * SCORE_MULTIPLIER);
+				notice_array[pos].text = "+".concat( String(change * SCORE_MULTIPLIER));
 			}
 			else 
 			{

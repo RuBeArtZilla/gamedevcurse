@@ -37,8 +37,8 @@ package
 		public var motion_type:uint;
 		public var motion_function:uint;
 		
-		public var active:Boolean;
-		public var state:uint;
+		public var active:Boolean = true;
+		public var state:uint = 1;
 		
 		public var size:Number = 40;
 		public var half:Number = 20;
@@ -82,7 +82,6 @@ package
 			motion_function = splited[9];
 			keyID = Game.keyArray[type];
 			UpdateCoord();
-			state = 1;
 			
 			circle_main.init(type, size);
 			circle_main.x = to_x;

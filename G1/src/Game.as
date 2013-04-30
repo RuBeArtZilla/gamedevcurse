@@ -5,6 +5,7 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
+	import flash.ui.Keyboard;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
@@ -24,7 +25,7 @@ package
 	 */
 	public class Game extends Sprite
 	{
-		public static var keyArray:Array = [68, 65, 87, 83, 39, 37, 38, 40];
+		public static var keyArray:Array = [Keyboard.D, Keyboard.A, Keyboard.S, Keyboard.W, Keyboard.RIGHT, Keyboard.LEFT, Keyboard.DOWN, Keyboard.UP];
 		public static var typeArr:Array = ["●", "■", "✖", "▲", "→", "←", "↓", "↑"]; //↑　→　↓　←　×　Ⅹ　〇　✖　□ ■　▲　●　○　∆　⇦　♦ ▲ ► ▼ ◄
 		public static var colorArr:Array = [0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF, 0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF];
 		public static var colorArrBkg:Array = [0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF, 0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF];
@@ -114,7 +115,7 @@ package
 			track.load(new URLRequest(note_array[1]));
 			track_channel = track.play();
 			
-			var bkg = new Loader();
+			var bkg:Loader = new Loader();
 			bkg.load(new URLRequest(note_array[2]));
 			addChild(bkg);
 			
@@ -126,14 +127,30 @@ package
 		
 		private function keyDown(e:KeyboardEvent):void
 		{
-			if (keyArray.indexOf(e.keyCode) > 0)
+			if (keyArray.indexOf(e.keyCode) >= 0)
 			{
+				if (block_last.length)
+				{
+					for each (var bl:Block in block_last)
+					{
+						if (bl.state)
+						{
+							bl.state = 0;
+							bl.visible = false;
+							score.Change(true, (bl.time - track_channel.position) / bl.event_duration);
+							return;
+						}
+					}
+				}
+				
 				if (block_active.length)
 				{
+					var tmp:Block = block_active[0];
+					block_active[0].visible = false;
+					block_active[0].state = 0;
 					block_last.push(block_active.shift());
-					var tmp:Block = block_last[block_last.length - 1];
-					
-					score.Change(tmp.keyID == e.keyCode, (tmp.time - track_channel.position) / tmp.event_duration);
+					score.Change(true, (tmp.time - track_channel.position) / tmp.event_duration);
+					return;
 				}
 			}
 		}
@@ -147,39 +164,48 @@ package
 		{
 			score.Update();
 			
-			if (track_channel)
+			if (track_channel) //if music playing
 			{
 				track_current_time = track_channel.position;
 				track_duration.Update(track_current_time, track.length);
 			}
 			
-			if (block_array.length)
+			//checking NOT ADDED blocks (invisible)
+			if (block_array.length)	
 			{
+				//add block to screen
 				while (track_current_time > block_array[0].time - block_pre_display_time)
 				{
-					block_active.push(block_array.shift()); //to "active" array
-					addChild(block_active[block_active.length - 1]);
-					if (!block_array.length)
-						break;
+					block_active.push(block_array.shift()); 		//move to "active" array
+					addChild(block_active[block_active.length - 1]);//add to screen
+					if (!block_array.length) break; 				//break if end of array
 				}
 			}
 			
+			//checking ACTIVE blocks (on screen, alive)
 			if (block_active.length)
 			{
-				if (track_current_time > block_active[0].time)
+				for (var i:int = block_active.length - 1; i >= 0; i--)
+				{
+					if ((track_current_time > block_active[i].time) && (block_active.active))
 					{
-						block_active[0].state = 0;
-						block_active[0].event_duration = block_destroy_time;
-						score.Change(false, 1);
-						block_last.push(block_active.shift());
+						block_active[i].active = false;
+						block_active[i].event_duration = block_destroy_time;
 					}
+				}
 				
-				for each (var bl:Block in block_active) 
+				while (track_current_time > block_active[0].time + block_destroy_time)
+				{
+					block_last.push(block_active.shift());
+				}
+				
+				for each (var bl:Block in block_active)
 				{
 					bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration);
 				}
 			}
 			
+			//checking OLD blocks (on screen, die animation)
 			if (block_last.length)
 			{
 				for (var i:int = block_last.length - 1; i >= 0; i--)
@@ -192,6 +218,8 @@ package
 					
 					if (track_current_time > block_last[i].time + block_destroy_time)
 					{
+						if (!block_last[i].state)
+							score.Change(false, 1);
 						removeChild(block_last[i]);
 						block_last.shift();
 						break;
