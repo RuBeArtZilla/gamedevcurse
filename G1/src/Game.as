@@ -129,27 +129,13 @@ package
 		{
 			if (keyArray.indexOf(e.keyCode) >= 0)
 			{
-				if (block_last.length)
-				{
-					for each (var bl:Block in block_last)
-					{
-						if (bl.state)
-						{
-							bl.state = 0;
-							bl.visible = false;
-							score.Change(true, (bl.time - track_channel.position) / bl.event_duration);
-							return;
-						}
-					}
-				}
-				
 				if (block_active.length)
 				{
-					var tmp:Block = block_active[0];
-					block_active[0].visible = false;
-					block_active[0].state = 0;
-					block_last.push(block_active.shift());
-					score.Change(true, (tmp.time - track_channel.position) / tmp.event_duration);
+					var tmp:Block = block_active[0]; //
+					block_active[0].visible = false; //TODO: START DIE ANIMATION
+					block_active[0].state = 0; //
+					block_last.push(block_active.shift()); //
+					score.Change((e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration); //change scores
 					return;
 				}
 			}
@@ -162,23 +148,25 @@ package
 		
 		public function enterFrame(e:Event):void
 		{
-			score.Update();
+			score.Update(); //redraw scores
 			
-			if (track_channel) //if music playing
+			//if music playing
+			if (track_channel)
 			{
-				track_current_time = track_channel.position;
-				track_duration.Update(track_current_time, track.length);
+				track_current_time = track_channel.position; //save current time position
+				track_duration.Update(track_current_time, track.length); //update track duration "timeline"
 			}
 			
 			//checking NOT ADDED blocks (invisible)
-			if (block_array.length)	
+			if (block_array.length)
 			{
 				//add block to screen
 				while (track_current_time > block_array[0].time - block_pre_display_time)
 				{
-					block_active.push(block_array.shift()); 		//move to "active" array
-					addChild(block_active[block_active.length - 1]);//add to screen
-					if (!block_array.length) break; 				//break if end of array
+					block_active.push(block_array.shift()); //move to "active" array
+					addChild(block_active[block_active.length - 1]); //add to screen
+					if (!block_array.length)
+						break; //break if end of array
 				}
 			}
 			
@@ -189,42 +177,37 @@ package
 				{
 					if ((track_current_time > block_active[i].time) && (block_active.active))
 					{
-						block_active[i].active = false;
-						block_active[i].event_duration = block_destroy_time;
+						block_active[i].active = false; //deactivate block
+						block_active[i].event_duration = block_destroy_time; //change event duration
 					}
 				}
 				
 				while (track_current_time > block_active[0].time + block_destroy_time)
 				{
-					block_last.push(block_active.shift());
+					block_last.push(block_active.shift()); //move to die animation 
+					score.Change(false, 1); //change player scores
+					if (!block_last.length)
+						break; //if no more elements then out from "while"
 				}
 				
 				for each (var bl:Block in block_active)
 				{
-					bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration);
+					bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration); //update all blocks
 				}
 			}
 			
 			//checking OLD blocks (on screen, die animation)
 			if (block_last.length)
 			{
-				for (var i:int = block_last.length - 1; i >= 0; i--)
+				if (track_current_time > block_last[0].time + block_destroy_time)
 				{
-					if (track_current_time > block_last[i].time)
-					{
-						//block_last[i].state = 0;
-						block_last[i].event_duration = block_destroy_time;
-					}
-					
-					if (track_current_time > block_last[i].time + block_destroy_time)
-					{
-						if (!block_last[i].state)
-							score.Change(false, 1);
-						removeChild(block_last[i]);
-						block_last.shift();
-						break;
-					}
-					
+					removeChild(block_last[0]);
+					block_last.shift();
+					break;
+				}
+				
+				for (var i:int = block_last.length - 1; i >= 0; i--)
+				{					
 					block_last[i].DrawUpdate((track_current_time - block_last[i].time) / block_last[i].event_duration);
 				}
 			}
