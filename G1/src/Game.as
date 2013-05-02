@@ -5,6 +5,8 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
+	import flash.net.NetConnection;
+	import flash.net.NetStream;
 	import flash.ui.Keyboard;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -19,6 +21,8 @@ package
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
+	import flash.media.Video;
+
 	/**
 	 * ...
 	 * @author ArtZilla
@@ -52,6 +56,8 @@ package
 		private var track:Sound;
 		private var track_channel:SoundChannel;
 		private var track_current_time:Number = 0;
+		
+		private var video:Video = new Video(1280, 720);
 		
 		private var track_duration:TrackDuration = new TrackDuration();
 		
@@ -120,6 +126,15 @@ package
 			bkg.load(new URLRequest(note_array[2]));
 			addChild(bkg);
 			
+			/*var connection:NetConnection = new NetConnection();
+			connection.connect(null);
+			var stream:NetStream = new NetStream(connection);
+			//stream.client = new CustomClient();
+			video.attachNetStream(stream);
+			stream.play("video.avi");
+			addChild(video);*/
+			
+			
 			track_duration.Init();
 			addChild(track_duration);
 			
@@ -133,7 +148,7 @@ package
 				if (block_active.length)
 				{
 					var tmp:Block = block_active[0]; //
-					//block_active[0].visible = false; //TODO: START DIE ANIMATION
+					block_active[0].visible = false; //TODO: START DIE ANIMATION
 					block_active[0].state = 0; //
 					block_last.push(block_active.shift()); //
 					score.Change((e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration); //change scores

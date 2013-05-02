@@ -15,8 +15,6 @@ package
 	 */
 	public class Block extends Sprite
 	{
-
-		
 		public var keyID:uint;
 		
 		public var type:uint;
@@ -113,7 +111,7 @@ package
 				circle_drag.x = CalcQuadraticBezier(1 + t, from_x, to_x, to_x);
 				circle_drag.y = CalcQuadraticBezier(1 + t, from_y, from_y, to_y);
 				
-				filters = [ new GlowFilter(Game.colorArr[type],  (- t), 16 * (1 + t), 16 * (1 + t), 4, BitmapFilterQuality.LOW, false, false) ];
+				/*filters = [ new GlowFilter(Game.colorArr[type],  (- t), 16 * (1 + t), 16 * (1 + t), 4, BitmapFilterQuality.LOW, false, false) ];*/
 				
 				var cqvx:Number = CalcQuadraticBezier(1 + t, from_x + half, to_x + half, to_x + half);
 				var cqvy:Number = CalcQuadraticBezier(1 + t, from_y + half, from_y + half, to_y + half);
