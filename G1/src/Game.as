@@ -22,7 +22,7 @@ package
 	import flash.display.BitmapData;
 	
 	import flash.media.Video;
-
+	
 	/**
 	 * ...
 	 * @author ArtZilla
@@ -36,7 +36,7 @@ package
 		public static var colorArrSdw:Array = [0x330000, 0x330033, 0x003300, 0x000033, 0x330000, 0x330033, 0x003300, 0x000033];
 		
 		//public var notePath:String = "http://files.artzilla.name/game/test/test.anf";
-		public var notePath:String = "http://files.artzilla.name/game/don't_say_lazy/Don't say lazy.anf";
+		public var notePath:String = "http://files.artzilla.name/game/song/don't_say_lazy/Don't say lazy.anf";
 		
 		private const FILE_HEADER_SIZE:int = 16;
 		
@@ -102,7 +102,8 @@ package
 		private function onNoteLoaded(e:Event):void
 		{
 			noteLoader.removeEventListener(Event.COMPLETE, onNoteLoaded);
-			note_array = e.target.data.split(/\n/);
+			note_array = e.target.data.replace("\r", "").split(/\n/);
+			
 			var song_name:TextField = new TextField();
 			song_name.text = note_array[0];
 			addChild(song_name);
@@ -127,13 +128,12 @@ package
 			addChild(bkg);
 			
 			/*var connection:NetConnection = new NetConnection();
-			connection.connect(null);
-			var stream:NetStream = new NetStream(connection);
-			//stream.client = new CustomClient();
-			video.attachNetStream(stream);
-			stream.play("video.avi");
-			addChild(video);*/
-			
+			   connection.connect(null);
+			   var stream:NetStream = new NetStream(connection);
+			   //stream.client = new CustomClient();
+			   video.attachNetStream(stream);
+			   stream.play("video.avi");
+			 addChild(video);*/
 			
 			track_duration.Init();
 			addChild(track_duration);
