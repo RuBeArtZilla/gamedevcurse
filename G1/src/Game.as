@@ -30,7 +30,7 @@ package
 	public class Game extends Sprite
 	{
 		public static var keyArray:Array = [Keyboard.D, Keyboard.A, Keyboard.S, Keyboard.W, Keyboard.RIGHT, Keyboard.LEFT, Keyboard.DOWN, Keyboard.UP];
-		public static var typeArr:Array = ["●", "■", "✖", "▲", "→", "←", "↓", "↑"]; //↑　→　↓　←　×　Ⅹ　〇　✖　□ ■　▲　●　○　∆　⇦　♦ ▲ ► ▼ ◄
+		public static var typeArr:Array = ["●", "■", "✖", "▲", "→", "←", "↓", "↑"]; //↑　→　↓　←　×　Ⅹ　〇　✖　□ ■　▲　●　○　∆　⇦　♦ ▲ ► ▼ ◄   ●■✖▲
 		public static var colorArr:Array = [0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF, 0xFF0000, 0xFF00FF, 0x00FF00, 0x0000FF];
 		public static var colorArrBkg:Array = [0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF, 0xFFCCCC, 0xFFCCFF, 0xCCFFCC, 0xCCCCFF];
 		public static var colorArrSdw:Array = [0x330000, 0x330033, 0x003300, 0x000033, 0x330000, 0x330033, 0x003300, 0x000033];
