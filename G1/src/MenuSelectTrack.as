@@ -66,6 +66,7 @@ package
 		private function NewGame(e:MouseEvent):void
 		{
 			removeEventListener(MouseEvent.CLICK, NewGame);
+			Game.notePath = song_list[index].song_url;
 			dispatchEvent(new CustomEvents("game_begin"));
 		}
 		

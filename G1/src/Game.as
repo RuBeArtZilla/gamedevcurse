@@ -36,7 +36,7 @@ package
 		public static var colorArrSdw:Array = [0x330000, 0x330033, 0x003300, 0x000033, 0x330000, 0x330033, 0x003300, 0x000033];
 		
 		//public var notePath:String = "http://files.artzilla.name/game/test/test.anf";
-		public var notePath:String = "http://files.artzilla.name/game/song/don't_say_lazy/Don't say lazy.anf";
+		public static var notePath:String = "http://files.artzilla.name/game/song/don't_say_lazy/Don't say lazy.anf?unchanged=123";
 		
 		private const FILE_HEADER_SIZE:int = 16;
 		
@@ -83,8 +83,6 @@ package
 			score.Init();
 			
 			noteLoader = new URLLoader();
-			noteLoader.addEventListener(Event.COMPLETE, onNoteLoaded);
-			noteLoader.load(new URLRequest(notePath));
 			
 			addEventListener(Event.ADDED_TO_STAGE, initGame);
 		}
@@ -92,6 +90,9 @@ package
 		private function initGame(e:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, initGame);
+			
+			noteLoader.addEventListener(Event.COMPLETE, onNoteLoaded);
+			noteLoader.load(new URLRequest(notePath));
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown, false, 0, true);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp, false, 0, true);
