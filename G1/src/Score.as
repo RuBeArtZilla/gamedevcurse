@@ -42,6 +42,11 @@ package
 			super();
 		}
 		
+		public function getScore():int 
+		{
+			return score;
+		}
+		
 		public function Init(start_score:int = 0):void
 		{
 			var scoreTextFormat:TextFormat = new TextFormat();

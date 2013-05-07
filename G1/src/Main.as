@@ -30,7 +30,6 @@ package
 		private function init(e:Event = null):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
-			// entry point
 			
 			screen_height = 720;
 			screen_width = 1280;
@@ -64,9 +63,11 @@ package
 			game.removeEventListener(CustomEvents.GAME_END, endGame);
 			removeChild(game);
 			
-			menu_end_game = new MenuEndGame();
-			addChild(menu_end_game);
-			menu_end_game.addEventListener(CustomEvents.MENU_SELECT_TRACK, startGame, false, 0, true);
+			//menu_end_game = new MenuEndGame();
+			//menu_main = new MenuMain();
+			menu_main.ShowScore(game.score.getScore());
+			addChild(menu_main);
+			menu_main.addEventListener(CustomEvents.MENU_SELECT_TRACK, selectTrack, false, 0, true);
 		}
 	}
 

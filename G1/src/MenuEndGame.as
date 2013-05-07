@@ -8,13 +8,12 @@ package
 	 */
 	public class MenuEndGame extends Sprite 
 	{
-		
+
 		public function MenuEndGame() 
 		{
 			super();
 			
 		}
-		
 	}
 
 }

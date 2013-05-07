@@ -5,6 +5,7 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
+	import flash.events.IOErrorEvent;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	import flash.ui.Keyboard;
@@ -40,6 +41,7 @@ package
 		
 		private const FILE_HEADER_SIZE:int = 16;
 		
+		private var pause:Boolean = false;
 		private var note_array:Array;
 		private var noteLoader:URLLoader;
 		
@@ -77,6 +79,11 @@ package
 				return -1;
 		}
 		
+		private function IOError(e:IOErrorEvent):void
+		{
+			var test:int;
+		}
+		
 		public function Game()
 		{
 			super();
@@ -105,6 +112,8 @@ package
 			noteLoader.removeEventListener(Event.COMPLETE, onNoteLoaded);
 			note_array = e.target.data.replace("\r", "").split(/\n/);
 			
+			
+			
 			var song_name:TextField = new TextField();
 			song_name.text = note_array[0];
 			addChild(song_name);
@@ -119,13 +128,16 @@ package
 			}
 			
 			track = new Sound();
+			track.addEventListener(IOErrorEvent.IO_ERROR, IOError);
 			track_channel = new SoundChannel();
 			
-			track.load(new URLRequest(note_array[1]));
+			track.load(new URLRequest(note_array[1].replace("\r", "")));
 			track_channel = track.play();
 			
 			var bkg:Loader = new Loader();
-			bkg.load(new URLRequest(note_array[2]));
+			
+			bkg.addEventListener(IOErrorEvent.IO_ERROR, IOError);
+			bkg.load(new URLRequest(note_array[2].replace("\r", "")));
 			addChild(bkg);
 			
 			/*var connection:NetConnection = new NetConnection();
@@ -148,11 +160,11 @@ package
 			{
 				if (block_active.length)
 				{
-					var tmp:Block = block_active[0]; //
+					var tmp:Block = block_active[0];
 					block_active[0].visible = false; //TODO: START DIE ANIMATION
-					block_active[0].state = 0; //
-					block_last.push(block_active.shift()); //
-					score.Change((e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration); //change scores
+					block_active[0].state = 0;
+					block_last.push(block_active.shift());
+					score.Change((e.keyCode == tmp.keyID), (tmp.time - track_channel.position) / tmp.event_duration);
 					return;
 				}
 			}
@@ -165,66 +177,73 @@ package
 		
 		public function enterFrame(e:Event):void
 		{
-			score.Update(); //redraw scores
+			score.Update();
 			
-			//if music playing
-			if (track_channel)
+			if ((!pause) && (track) && (track.length))
 			{
-				track_current_time = track_channel.position; //save current time position
-				track_duration.Update(track_current_time, track.length); //update track duration "timeline"
-			}
-			
-			//checking NOT ADDED blocks (invisible)
-			if (block_array.length)
-			{
-				//add block to screen
-				while (track_current_time > block_array[0].time - block_pre_display_time)
+				if (track_channel)
 				{
-					block_active.push(block_array.shift()); //move to "active" array
-					addChild(block_active[block_active.length - 1]); //add to screen
-					if (!block_array.length)
-						break; //break if end of array
-				}
-			}
-			
-			//checking ACTIVE blocks (on screen, alive)
-			if (block_active.length)
-			{
-				for (var i:int = block_active.length - 1; i >= 0; i--)
-				{
-					if ((track_current_time > block_active[i].time) && (block_active[i].active))
+					track_current_time = track_channel.position;
+					track_duration.Update(track_current_time, track.length);
+					
+					if (track_current_time >= track.length - 1000)
 					{
-						block_active[i].active = false; //deactivate block
-						block_active[i].event_duration = block_destroy_time; //change event duration
+						dispatchEvent(new CustomEvents("game_end"));
 					}
 				}
 				
-				while (track_current_time > block_active[0].time + block_destroy_time)
+				//checking NOT ADDED blocks (invisible)
+				if (block_array.length)
 				{
-					block_last.push(block_active.shift()); //move to die animation 
-					score.Change(false, 1); //change player scores
-					if (!block_active.length)
-						break; //if no more elements then out from "while"
+					//add block to screen
+					while (track_current_time > block_array[0].time - block_pre_display_time)
+					{
+						block_active.push(block_array.shift()); //move to "active" array
+						addChild(block_active[block_active.length - 1]);
+						if (!block_array.length)
+							break;
+					}
 				}
 				
-				for each (var bl:Block in block_active)
+				//checking ACTIVE blocks (on screen, alive)
+				if (block_active.length)
 				{
-					bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration); //update all blocks
-				}
-			}
-			
-			//checking OLD blocks (on screen, die animation)
-			if (block_last.length)
-			{
-				if (track_current_time > block_last[0].time + block_destroy_time)
-				{
-					removeChild(block_last[0]);
-					block_last.shift();
+					for (var i:int = block_active.length - 1; i >= 0; i--)
+					{
+						if ((track_current_time > block_active[i].time) && (block_active[i].active))
+						{
+							block_active[i].active = false;
+							block_active[i].event_duration = block_destroy_time;
+						}
+					}
+					
+					while (track_current_time > block_active[0].time + block_destroy_time)
+					{
+						block_last.push(block_active.shift()); //move to die animation 
+						score.Change(false, 1);
+						if (!block_active.length)
+							break;
+					}
+					
+					for each (var bl:Block in block_active)
+					{
+						bl.DrawUpdate((track_current_time - bl.time) / bl.event_duration); //update all blocks
+					}
 				}
 				
-				for (var j:int = block_last.length - 1; j >= 0; j--)
+				//checking OLD blocks (on screen, die animation)
+				if (block_last.length)
 				{
-					block_last[j].DrawUpdate((track_current_time - block_last[j].time) / block_last[j].event_duration);
+					if (track_current_time > block_last[0].time + block_destroy_time)
+					{
+						removeChild(block_last[0]);
+						block_last.shift();
+					}
+					
+					for (var j:int = block_last.length - 1; j >= 0; j--)
+					{
+						block_last[j].DrawUpdate((track_current_time - block_last[j].time) / block_last[j].event_duration);
+					}
 				}
 			}
 		}

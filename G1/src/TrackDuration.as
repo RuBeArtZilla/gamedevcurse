@@ -13,7 +13,6 @@ package
 	public class TrackDuration extends Sprite 
 	{
 		private const GLOW_DURATION:uint = 40;
-		
 		private var current_position:Number = 0;
 		private var track_duration:Number = 100000;
 		private var pos_y:Number = 720;
@@ -22,10 +21,9 @@ package
 		private var track_duration_in_pixel:Number = 0;
 		
 		private var glow:GlowFilter = new GlowFilter(0xCCCCCC,  0.8, 16, 16, 4, BitmapFilterQuality.LOW, false, false);
-		
 		private var cooldown:uint = GLOW_DURATION;
-		
 		private var track_duration_current:TrackDurationCurrent = new TrackDurationCurrent();
+		
 		public function TrackDuration() 
 		{
 			super();

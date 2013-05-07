@@ -3,6 +3,7 @@ package
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
@@ -13,7 +14,7 @@ package
 	 */
 	public class MenuSelectTrack extends Sprite
 	{
-		private const song_file:String = "http://files.artzilla.name/game/song_list";
+		private const song_file:String = "http://files.artzilla.name/game/song_list?refresh=" + Math.random().toString;
 		public const MINI_SIZE:Number = 220;
 		private var song_list_loader:URLLoader = new URLLoader();
 		private var song_list_file:Array = new Array();
@@ -27,7 +28,10 @@ package
 			super();
 			
 			song_list_loader.addEventListener(Event.COMPLETE, onSongListLoaded);
+			
+			song_list_loader.addEventListener(IOErrorEvent.IO_ERROR, IOError);
 			song_list_loader.load(new URLRequest(song_file));
+			
 			
 			var btn_new_game:Button = new Button();
 			
@@ -84,6 +88,12 @@ package
 			song_list[index].activate();
 			index = new_id;
 			song_list[index].activate();
+		}
+		
+		private function IOError(e:IOErrorEvent):void
+		{
+			song_list_loader.removeEventListener(IOErrorEvent.IO_ERROR, IOError)
+			song_list_loader.load(new URLRequest("song_list_local"));
 		}
 	}
 }
