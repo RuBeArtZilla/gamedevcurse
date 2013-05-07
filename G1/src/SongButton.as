@@ -36,8 +36,7 @@ package
 		private var labelGlow2:GlowFilter = new GlowFilter(0x00FFFF, .80, 14, 14, 5, 3);
 		private var labelFocus:GlowFilter = new GlowFilter(0x000000, .50, 16, 16, 5, 3);
 		private var labelBlur:BlurFilter = new BlurFilter(1, 1, 3);
-		
-		private var parent:MenuSelectTrack;
+		private var _parent:MenuSelectTrack;
 		
 		public function SongButton()
 		{
@@ -62,7 +61,7 @@ package
 			label.setTextFormat(labelFormat);
 			this.buttonMode = true;
 			this.useHandCursor = true;
-			parent = par;
+			_parent = par;
 			
 			if (active)
 				label.filters = [labelGlow, labelBlur, labelFocus];
@@ -79,8 +78,8 @@ package
 		
 		private function onMouseCLICK(e:MouseEvent):void
 		{
-			parent.UpdatePicture(song_mini_url);
-			parent.ChangeActive(id);
+			_parent.UpdatePicture(song_mini_url);
+			_parent.ChangeActive(id);
 		}
 		
 		private function onMouseOver(e:MouseEvent):void
